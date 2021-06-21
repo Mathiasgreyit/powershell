@@ -1,4 +1,20 @@
 function Get-majoAzKeyVaultCertificate {
+    <#
+    .SYNOPSIS
+        Short description
+    .DESCRIPTION
+        Long description
+    .EXAMPLE
+        PS C:\> <example usage>
+        Explanation of what the example does
+    .INPUTS
+        Inputs (if any)
+    .OUTPUTS
+        Output (if any)
+    .NOTES
+        Script based on information on https://docs.microsoft.com/sv-se/azure/key-vault/certificates/how-to-export-certificate?tabs=azure-powershell
+    #>
+    
     [CmdletBinding()]
     param (
         [String]$CertificateName,
