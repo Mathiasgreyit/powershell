@@ -21,8 +21,9 @@ function Get-majoIntuneDetectedApps {
             $nexturi = 'https://graph.microsoft.com/beta/deviceManagement/detectedApps?$search="' + $Search + '"'
         }
         elseif ($FilterStartsWith) {
-            $nexturi = 'https://graph.microsoft.com/beta/deviceManagement/detectedApps?$filter=startsWith('+$FilterStartsWith+')'
-        }else{
+            $nexturi = 'https://graph.microsoft.com/beta/deviceManagement/detectedApps?$filter=startsWith(' + $FilterStartsWith + ')'
+        }
+        else {
             $nexturi = 'https://graph.microsoft.com/beta/deviceManagement/detectedApps'
         }
 
@@ -33,10 +34,22 @@ function Get-majoIntuneDetectedApps {
         
         do {
             $sv = Invoke-MgGraphRequest -Method GET -Uri $nexturi
+            if ($sv.ContainsKey("@odata.count")) {
+                if ($sv["@odata.count"] -eq 0) {
+                    Write-Verbose "No results from query."; Break
+                }
+            }else{
+                Write-Verbose "Unexpected result from query. Aborting!"; Break
+            }
             foreach ($a in $sv.Value) {
                 $a  
-            }       
-            $nexturi = $sv["@odata.nextLink"]
+            }
+            if ($sv.ContainsKey("@odata.nextlink")) {       
+                $nexturi = $sv["@odata.nextLink"]
+            }
+            else {
+                $nexturi = $null
+            }
         } until ($nexturi -eq $null)
         
     
