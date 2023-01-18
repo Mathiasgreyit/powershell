@@ -80,9 +80,11 @@ process {
         Write-Output "User $($UserObject.UserPrincipalName) Old proxyAddresses: $oldproxy"
         Write-Output "New $($UserObject.UserPrincipalName) proxyAddresses: $newproxy"
         Set-ADUser -Identity $UserObject -replace @{ProxyAddresses=$newproxy -split ","}
+        Set-ADUser -Identity $UserObject -replace @{mail=$($UserObject.UserPrincipalName)}
     }else{
         Write-Output "Either the user has no proxyAddresses or OldDomainSuffix doesnt match. Skipping..."
     }
+
 }
 
 end {
