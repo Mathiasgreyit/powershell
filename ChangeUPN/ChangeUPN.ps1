@@ -69,10 +69,13 @@ process {
             if ($m -clike 'SMTP:*' -and $m -ne "SMTP:$newuserupn") {
                 $newproxy = $newproxy + "$($m.ToLower()),"
             }else{
-                $newproxy = $newproxy + "$m,"
+                if ($m -ne "smtp:$newuserupn") { # Avoiding getting double mail adresses
+                    $newproxy = $newproxy + "$m,"
+                }
             }
         }
-        if ($UserObject.proxyAddresses -notcontains "SMTP:$newuserupn") {
+        if ($UserObject.proxyAddresses -cnotcontains "SMTP:$newuserupn") {
+            
             $newproxy = $newproxy + "SMTP:$newuserupn"    
         }
         $newproxy = $newproxy.trimend(','); $oldproxy = $oldproxy.trimend(',')
@@ -80,7 +83,7 @@ process {
         Write-Output "User $($UserObject.UserPrincipalName) Old proxyAddresses: $oldproxy"
         Write-Output "New $($UserObject.UserPrincipalName) proxyAddresses: $newproxy"
         Set-ADUser -Identity $UserObject -replace @{ProxyAddresses=$newproxy -split ","}
-        Set-ADUser -Identity $UserObject -replace @{mail=$($UserObject.UserPrincipalName)}
+        Set-ADUser -Identity $UserObject -replace @{mail=$newuserupn}
     }else{
         Write-Output "Either the user has no proxyAddresses or OldDomainSuffix doesnt match. Skipping..."
     }
