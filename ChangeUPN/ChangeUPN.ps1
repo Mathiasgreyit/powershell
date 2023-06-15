@@ -47,7 +47,7 @@ process {
     if (-not($OverrideNullProxyaddresses)) {
     # Validating that property proxyAddresses is supplied
         if ($UserObject.PropertyNames -notcontains 'proxyAddresses') {
-            Throw "Must supply proxyAddresses! Do this by specifying Get-ADUser -Property proxyAddresses. It can also be that the user has null as proxyAddresses, use OverrideNullProxyaddresses"; Break
+            Throw "User $($UserObject.UserPrincipalName) must have proxyAddress! Do this by specifying Get-ADUser -Property proxyAddresses. It can also be that the user has null as proxyAddresses, use OverrideNullProxyaddresses"; Break
         }
     }
 
