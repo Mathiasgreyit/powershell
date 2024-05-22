@@ -18,7 +18,7 @@ This script adds or updates an outbound connector in Exchange Online with TLS se
 
 ```powershell
 Add-majoOutboundConnectorTLS.ps1 -Domains "example.com", "contoso.com" -Identity "External TLS 2" -Comment "Outbound connector for TLS 2"
-
+```
 ### Get-majoOutBoundConnectorTLS.ps1
 
 This script retrieves outbound connectors with TLS settings and their recipient domains. It provides the option to filter by duplicate domains and specific connector identities or domains.
