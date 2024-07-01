@@ -39,19 +39,25 @@ begin {
 }
 
 process {
+    # 
     if ($tlsconnector) {
-        $tlsconnector.RecipientDomains += $Domains
+        foreach ($domain in $domains) {
+        $tlsconnector.RecipientDomains += $Domain
         try {
+            write-Verbose "Adding domain $domain to Outboundconnector $identity ..."
             Set-OutboundConnector -Identity $Identity -TlsSettings 'CertificateValidation' -RecipientDomains $tlsconnector.RecipientDomains -ErrorAction Stop
+            write-Verbose "Succesfully added domain $domain to Outboundconnector $identity"
         }
         catch {
             if ($_.Exception.Message -match "is already present in the collection") {
-                throw "Recipient domain $domains already present in the outbound connector."
+                Write-Error "Recipient domain $domain already present in the outbound connector $identity!"
             }
             else {
-                throw $_
+                Write-Error "Unhandled error $_.ErrorDetails"
             }
         }
+        $tlsconnector = Get-OutboundConnector | Where-Object { $_.Name -eq $Identity }
+    }
             
     }
     else {

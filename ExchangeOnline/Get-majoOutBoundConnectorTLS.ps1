@@ -43,8 +43,8 @@ param (
 )
 begin {
     # Check if we have name Outboundconnector with force TLS on
-    $tlsconnectors = Get-OutboundConnector | Where-Object { $_.TlsSettings -eq 'CertificateValidation' }
-    
+    $tlsconnectors = Get-OutboundConnector | Where-Object {$_.Smarthosts.count -eq 0 -and ($_.TlsSettings -eq 'CertificateValidation' -or $_.TlsSettings -eq 'EncryptionOnly')}
+
 }
 process {
     $recdom = @()   
