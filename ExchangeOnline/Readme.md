@@ -31,7 +31,11 @@ This script retrieves outbound connectors with TLS settings and their recipient 
 
 #### Example
 
+Tip! Use -Verbose to get additional output
+
 ```powershell
+Get-majoOutBoundConnectorTLS.ps1 -Domain "example.com"
+Get-majoOutBoundConnectorTLS.ps1 -Domain "example.com" -Verbose
 Get-majoOutBoundConnectorTLS.ps1 -OnlyDuplicateDomains
 Get-majoOutBoundConnectorTLS.ps1 -OnlyDuplicateDomains -Domain "example.com"  
 Get-majoOutBoundConnectorTLS.ps1 -OnlyDuplicateDomains -Identity "Connector1" -Domain "example.com"
