@@ -3,6 +3,7 @@
 <#
 .SYNOPSIS
     Finds usage of the "memberOf" operator in dynamic membership rules across Entra ID.
+    Requires the Global Reader Entra ID role (or equivalent permissions).
 .DESCRIPTION
     Scans dynamic groups, dynamic administrative units, and entitlement management
     auto-assignment policies for rules containing the "memberOf" operator.
@@ -102,7 +103,7 @@ for ($i = 0; $i -lt $allPolicies.Count; $i++) {
     $polSummary = $allPolicies[$i]
     Write-Progress -Activity 'Scanning for memberOf usage' -Status "Checking policy $($i + 1) of $($allPolicies.Count)" -PercentComplete (50 + ($i + 1) / [Math]::Max($allPolicies.Count, 1) * 50)
     try {
-        $policyUri = "https://graph.microsoft.com/v1.0/identityGovernance/entitlementManagement/assignmentPolicies/$($polSummary.id)"
+        $policyUri = "https://graph.microsoft.com/v1.0/identityGovernance/entitlementManagement/assignmentPolicies/$($polSummary.id)?`$expand=accessPackage(`$select=id,displayName)"
         $policy = Invoke-MgGraphRequest -Method GET -Uri $policyUri
 
         if (-not $policy.specificAllowedTargets) { continue }
@@ -113,11 +114,12 @@ for ($i = 0; $i -lt $allPolicies.Count; $i++) {
                 $target.membershipRule -match '\bmemberOf\b') {
 
                 $results.Add([PSCustomObject]@{
-                    Type           = 'Auto-Assignment Policy'
-                    Id             = $policy.id
-                    DisplayName    = $policy.displayName
-                    ProcessingState = 'N/A'
-                    MembershipRule = $target.membershipRule
+                    Type               = 'Auto-Assignment Policy'
+                    Id                 = $policy.id
+                    DisplayName        = $policy.displayName
+                    AccessPackageName  = $policy.accessPackage.displayName
+                    ProcessingState    = 'N/A'
+                    MembershipRule     = $target.membershipRule
                 })
             }
         }
